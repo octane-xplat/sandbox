@@ -34,10 +34,10 @@ export function App() @{
 				</HStack>
 				<Text testID="svg.settings">{'size=' + size + '; color=' + color}</Text>
 				<VStack id="svg-card-tinted" className="card">
-					<Text className="heading">Tintable registered Icon</Text>
+					<Text className="heading">Imported currentColor probe</Text>
 					<Text id="svg-description">
-						?raw → inner markup → registry. Ring stroke and needle fill use currentColor. Amber
-						center and brown stroke stay fixed.
+						The color targets the ring and needle. It works on web; the tested iOS renderer
+						leaves both black. Amber and brown are fixed colors.
 					</Text>
 					<Icon
 						id="svg-tinted"
@@ -45,7 +45,7 @@ export function App() @{
 						registry={icons}
 						size={size}
 						color={color}
-						accessibilityLabel="Tintable imported compass"
+						accessibilityLabel="Imported compass color probe"
 					/>
 				</VStack>
 				<VStack id="svg-card-asset" className="card">

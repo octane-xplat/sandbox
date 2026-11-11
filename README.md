@@ -1,7 +1,14 @@
 # Custom SVG import experiment
 
 This branch tests an authored local SVG through the published Octane Xplat
-asset and media APIs. No SVG loader plugin, remote artwork, or pasted inline
+asset and media APIs. **Known iOS limitation:** the imported `currentColor`
+markup does not tint in the tested 0.20.0 native SVGKit path. Native vector-layer
+properties remain black before and after `Icon.color` changes; literal amber
+and brown paints decode correctly. Web tinting passes. The failing iOS contract
+is retained as an explicit expected-failure test in `src/tint.spec.tsrx`.
+Tracked in [framework issue #237](https://github.com/octane-xplat/octane-xplat/issues/237).
+
+No SVG loader plugin, remote artwork, or pasted inline
 replacement is used. Fixture: `src/assets/compass.svg`.
 
 ## Minimal consumer
@@ -33,7 +40,7 @@ export function Compass() {
 ```
 
 `Icon.color` does not recolor the `src` representation. For tintable fill and
-stroke, import the actual file as text and supply inner markup to the registry:
+stroke on web (with the iOS limitation above), import the actual file as text and supply inner markup to the registry:
 
 ```tsx
 import compassSvg from './assets/compass.svg?raw'
@@ -63,8 +70,9 @@ imports; no custom `*.svg` declaration was added.
 1. Run `pnpm install --frozen-lockfile` with pnpm **11.24.0**.
 2. Run `pnpm exec vite --host 127.0.0.1 --port 5203 --strictPort`; open
    `http://127.0.0.1:5203`.
-3. Use **24 px / 80 px**, then **Blue / rose**. The tintable icon's ring stroke
-   and needle fill use `currentColor`. Its amber fill and brown stroke are fixed.
+3. Use **24 px / 80 px**, then **Blue / rose**. The probe's ring stroke
+   and needle fill use `currentColor` and change on web; they remain black on the
+   tested iOS renderer. Its amber fill and brown stroke are fixed.
    The default-import Icon and Image demonstrate the asset source path.
 4. Use **Missing / valid source**, then restore the source. Use **Unmount / mount
    image** to repeat loading. The status labels describe requested state, not
@@ -136,7 +144,7 @@ fresh debug IPA alone can still open that runner: NativeScript's device-side
 the packaged entry. The normal `ns run` command syncs the demo entry and restarts
 the app. Do not erase the phone or delete its app data to switch screens.
 
-The physical iPhone run passed all 9 ordinary tests plus 1 expected failure.
+The original physical iPhone run passed all 9 ordinary tests plus 1 expected failure.
 The SVG case checks native decoder objects, dimensions, tint source changes and
 remounting. It does not inspect pixels or establish native painted colors.
 
