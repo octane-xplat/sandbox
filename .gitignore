@@ -1,0 +1,12 @@
+node_modules
+dist
+platforms/
+hooks/
+.xplat/
+
+.DS_Store
+.env
+.env.*
+!.env.example
+links/octane-xplat
+.ns-vite-build/

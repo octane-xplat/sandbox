@@ -1,0 +1,107 @@
+packages: []
+catalogs:
+  xplat:
+    "@nativescript-community/octane": 0.2.5
+    "@nativescript-community/vite-octane": 0.2.1
+    "@nativescript/android": 9.1.1
+    "@nativescript/core": 9.1.3
+    "@nativescript/ios": 9.1.0
+    "@nativescript/types": 9.1.4
+    "@nativescript/unit-test-runner": 5.0.0
+    "@nativescript/vite": 8.0.20
+    "@octane-xplat/jsx": 0.20.0
+    "@octane-xplat/nativescript-mason-core": 1.0.0-beta.7
+    "@octane-xplat/platform": 0.20.0
+    "@octane-xplat/ui": 0.20.0
+    "@octane-xplat/workshop": 0.20.0
+    "@octanejs/vite-plugin": 0.5.0
+    "@tsrx/oxc": 0.20.0
+    "@valor/nativescript-websockets": 2.0.3
+    jsdom: 30.1.1
+    nativescript: 9.1.1
+    octane: 0.16.3
+    octane-xplat: 0.20.0
+    typescript-classic: npm:typescript@5.9.3
+    vite: 8.3.6
+    vitest: 4.1.11
+overrides:
+  "@lexical/a11y": 0.53.0
+  "@lexical/code": 0.53.0
+  "@lexical/devtools-core": 0.53.0
+  "@lexical/dragon": 0.53.0
+  "@lexical/extension": 0.53.0
+  "@lexical/hashtag": 0.53.0
+  "@lexical/history": 0.53.0
+  "@lexical/html": 0.53.0
+  "@lexical/internal": 0.53.0
+  "@lexical/link": 0.53.0
+  "@lexical/list": 0.53.0
+  "@lexical/mark": 0.53.0
+  "@lexical/markdown": 0.53.0
+  "@lexical/overflow": 0.53.0
+  "@lexical/plain-text": 0.53.0
+  "@lexical/rich-text": 0.53.0
+  "@lexical/selection": 0.53.0
+  "@lexical/table": 0.53.0
+  "@lexical/text": 0.53.0
+  "@lexical/utils": 0.53.0
+  "@lexical/yjs": 0.53.0
+  "@nativescript-community/vite-octane>esbuild": 0.27.7
+  "@nativescript/vite>esbuild": 0.27.7
+  "@nativescript/vite>typescript": 5.9.3
+  "@tiptap/core": 3.32.2
+  "@tiptap/extension-blockquote": 3.32.2
+  "@tiptap/extension-bold": 3.32.2
+  "@tiptap/extension-bubble-menu": 3.32.2
+  "@tiptap/extension-bullet-list": 3.32.2
+  "@tiptap/extension-code": 3.32.2
+  "@tiptap/extension-code-block": 3.32.2
+  "@tiptap/extension-document": 3.32.2
+  "@tiptap/extension-dropcursor": 3.32.2
+  "@tiptap/extension-floating-menu": 3.32.2
+  "@tiptap/extension-gapcursor": 3.32.2
+  "@tiptap/extension-hard-break": 3.32.2
+  "@tiptap/extension-heading": 3.32.2
+  "@tiptap/extension-horizontal-rule": 3.32.2
+  "@tiptap/extension-italic": 3.32.2
+  "@tiptap/extension-link": 3.32.2
+  "@tiptap/extension-list": 3.32.2
+  "@tiptap/extension-list-item": 3.32.2
+  "@tiptap/extension-list-keymap": 3.32.2
+  "@tiptap/extension-ordered-list": 3.32.2
+  "@tiptap/extension-paragraph": 3.32.2
+  "@tiptap/extension-strike": 3.32.2
+  "@tiptap/extension-text": 3.32.2
+  "@tiptap/extension-underline": 3.32.2
+  "@tiptap/extensions": 3.32.2
+  "@tiptap/pm": 3.32.2
+  "@tiptap/starter-kit": 3.32.2
+  "@tiptap/static-renderer": 3.32.2
+  lexical: 0.53.0
+  oxlint-tsgolint: 7.0.2005
+  regenerate: 1.5.0
+  vite>esbuild: 0.27.7
+patchedDependencies:
+  octane@0.16.3: patches/octane@0.16.3.patch
+  "@nativescript/core@9.1.3": patches/@nativescript__core@9.1.3.patch
+  "@octane-xplat/nativescript-mason-core@1.0.0-beta.7": patches/@octane-xplat__nativescript-mason-core@1.0.0-beta.7.patch
+  css@3.0.0: patches/css@3.0.0.patch
+  "@nativescript/vite@8.0.20": patches/@nativescript__vite@8.0.20.patch
+  "@nativescript-community/octane@0.2.5": patches/@nativescript-community__octane@0.2.5.patch
+  "@nativescript-community/vite-octane@0.2.1": patches/@nativescript-community__vite-octane@0.2.1.patch
+  "@octanejs/tiptap@0.0.62": patches/@octanejs__tiptap@0.0.62.patch
+  "@nativescript/doctor@2.0.18": patches/@nativescript__doctor@2.0.18.patch
+  "@sveltejs/acorn-typescript@1.0.13": patches/@sveltejs__acorn-typescript@1.0.13.patch
+  "@nativescript-community/sqlite-bridge@4.1.1": patches/@nativescript-community__sqlite-bridge@4.1.1.patch
+allowUnusedPatches: true
+allowBuilds:
+  "@nativescript/core": false
+  "@octane-xplat/cli": true
+  "@parcel/watcher": true
+  esbuild: true
+  nativescript: true
+  protobufjs: false
+nodeLinker: hoisted
+saveExact: true
+# Keep optional local links active when running scripts. Install explicitly after dependency edits.
+verifyDepsBeforeRun: false
