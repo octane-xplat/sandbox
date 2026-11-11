@@ -13,6 +13,7 @@
 		"build:android": "ns build android --disable-npm-install",
 		"test": "vitest run --config vitest.web.config.mts",
 		"test:web": "vitest run --config vitest.web.config.mts",
+		"test:browser": "node scripts/verify-svg-browser.web.mjs",
 		"test:ios": "ns test ios --disable-npm-install",
 		"test:android": "ns test android --disable-npm-install",
 		"lint": "xplat lint",
@@ -47,6 +48,7 @@
 		"jsdom": "catalog:xplat",
 		"nativescript": "catalog:xplat",
 		"octane-xplat": "catalog:xplat",
+		"playwright": "1.65.0",
 		"typescript-classic": "catalog:xplat",
 		"vite": "catalog:xplat",
 		"vitest": "catalog:xplat"

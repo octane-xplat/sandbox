@@ -6,6 +6,7 @@
 // gesture observers as real touches — that proves your wiring, not OS
 // hit-testing (device journeys like that belong to Maestro).
 import { describe, expect, it } from 'vitest'
+import { isIOS, type View as NativeView } from '@nativescript/core'
 import { useEffect, useState, useSyncExternalStore } from 'octane'
 import { Pressable, Text, TextInput, View } from '@octane-xplat/ui'
 import {
@@ -20,6 +21,7 @@ import {
 } from '@octane-xplat/platform/testing'
 
 import { App } from './App.tsrx'
+import { assetUrl, explicitUrl, source } from './svg-fixture'
 
 // Controlled input — typing flows up through onChange and back down as the
 // rendered value, and parent writes reach the native field.
@@ -71,19 +73,66 @@ function FetchLabel(props: { fail?: boolean }) @{
   <Text>{'fetch: ' + state}</Text>
 }
 
-describe('starter app on device', () => {
+describe('SVG import app on device', () => {
   it('mounts, reacts to a tap, and unmounts cleanly', async () => {
     const { view, host, unmount } = await mountXplat(App)
 
-    const increment = findByTestId(view, 'counter.increment')
-    const count = findByTestId<TextInputView>(view, 'counter.value')
+    expect(viewText(view).some((text) => text.includes('default: string'))).toBe(true)
 
-    expect(increment?.isLoaded, 'counter.increment resolves to a loaded native view').toBe(true)
+    const icon = view.getViewById<NativeView>('svg-tinted')
 
-    await tap(increment!)
-    await waitUntil(() => count?.text === '1', {
-      message: 'tap did not reach the increment Pressable',
+    expect(icon?.isLoaded, 'imported SVG host loads').toBe(true)
+    expect(explicitUrl).toBe(assetUrl)
+    expect(assetUrl.startsWith('data:image/svg+xml')).toBe(true)
+    expect(source.startsWith('<svg')).toBe(true)
+
+    const svgHost = icon as typeof icon & { src: string }
+
+    expect(svgHost.src).toContain('stroke="currentColor"')
+    expect(svgHost.src).toContain('color="#2563eb"')
+
+    const image = view.getViewById('svg-image') as typeof icon & { src: string }
+
+    expect(image?.isLoaded).toBe(true)
+    expect(image.src).toContain('<svg')
+
+    // Object presence only; do not inspect or capture rendered image pixels.
+    const decoded = (host: unknown) => {
+      const native = (host as { nativeViewProtected: { image?: unknown; _svg?: unknown } })
+        .nativeViewProtected
+
+      return !!(isIOS ? native.image : native._svg)
+    }
+
+    await waitUntil(() => decoded(icon) && decoded(image), {
+      message: 'SVG native decoder did not produce objects',
     })
+
+    await tap(findByTestId(view, 'svg.large')!)
+    await waitUntil(() => viewText(view).some((text) => text.includes('size=80')))
+    await tap(findByTestId(view, 'svg.color')!)
+    await waitUntil(() => viewText(view).some((text) => text.includes('color=#be123c')))
+    await waitUntil(() => svgHost.src.includes('color="#be123c"'))
+    await waitUntil(() => Math.round(icon!.getActualSize().width) === 80)
+    expect(svgHost.src).toContain('fill="#f59e0b"')
+    expect(svgHost.src).toContain('stroke="#7c2d12"')
+    console.log(
+      'SVG_NATIVE',
+      JSON.stringify({
+        assetPrefix: assetUrl.slice(0, 40),
+        size: icon!.getActualSize(),
+        decodedIcon: decoded(icon),
+        decodedImage: decoded(image),
+        source: svgHost.src,
+      }),
+    )
+
+    await tap(findByTestId(view, 'svg.small')!)
+    await waitUntil(() => Math.round(icon!.getActualSize().width) === 24)
+    await tap(findByTestId(view, 'svg.remount')!)
+    await waitUntil(() => !view.getViewById('svg-image'))
+    await tap(findByTestId(view, 'svg.remount')!)
+    await waitUntil(() => !!view.getViewById('svg-image')?.isLoaded)
 
     await unmount()
     await nextRenderPass()
