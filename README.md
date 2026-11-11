@@ -106,6 +106,27 @@ goddard-agent resource run --json '{"resources":{"native_builds":1,"resident_dev
 The managed runner compiles and runs as one supervised phase. Its isolated host
 bridge uses port 17883. Standalone app builds reserve `native_builds:1` only.
 
+## Physical iOS testing
+
+The runner needs a LAN-reachable coordinator URL on physical iOS. Keep the
+phone and Mac on a network where the phone can reach the Mac. In a reservation
+with `exclusive:["device:<UDID>"]` and `native_builds:1` (no resident device slot),
+run the following, replacing the example IP and device identifier:
+
+```sh
+NS_TEST_HOST=192.168.1.10 VITE_NATIVE_TEST_URL=ws://192.168.1.10:17883 pnpm test:ios --device <UDID>
+```
+
+`NS_TEST_HOST` binds the host runner to that interface; `VITE_NATIVE_TEST_URL`
+embeds the matching WebSocket URL in the test entry only. The iOS app declares
+local network use for development testing. Allow Local Network access if iOS
+asks. Both values are optional; existing simulator/Android defaults remain.
+No machine address is saved in source or the lockfile.
+
+The physical iPhone run passed all 9 ordinary tests plus 1 expected failure.
+The SVG case checks native decoder objects, dimensions, tint source changes and
+remounting. It does not inspect pixels or establish native painted colors.
+
 The browser verifier never takes screenshots or reads pixels. It checks the
 image decoder's `naturalWidth`, DOM attributes, computed styles and element
 rectangles. It confirms browser error→load recovery for a missing local source.
