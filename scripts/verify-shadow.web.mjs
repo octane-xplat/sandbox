@@ -22,9 +22,17 @@ try {
 				const element = document.querySelector(`[data-testid="shadow.${id}"]`)
 				const style = getComputedStyle(element)
 				const rect = element.getBoundingClientRect()
-				const child = element.querySelector('.overflow-marker').getBoundingClientRect()
+				const marker = element.querySelector('.overflow-marker')
+				const child = marker.getBoundingClientRect()
+				const label = element.firstElementChild.getBoundingClientRect()
+				const markerLabel = marker.firstElementChild.getBoundingClientRect()
 
 				return {
+					display: style.display,
+					labelCenterX: label.left + label.width / 2 - (rect.left + rect.width / 2),
+					labelCenterY: label.top + label.height / 2 - (rect.top + rect.height / 2),
+					markerCenterX: markerLabel.left + markerLabel.width / 2 - (child.left + child.width / 2),
+					markerCenterY: markerLabel.top + markerLabel.height / 2 - (child.top + child.height / 2),
 					shadow: style.boxShadow,
 					radius: style.borderRadius,
 					overflow: style.overflow,
@@ -38,7 +46,16 @@ try {
 		})
 
 	const click = (id) => page.locator(`[data-testid="shadow.${id}"]`).click()
+	const assertCentered = (state) => {
+		for (const sample of [state.preview, state.control]) {
+			assert.equal(sample.display, 'flex')
+			for (const delta of [sample.labelCenterX, sample.labelCenterY, sample.markerCenterX, sample.markerCenterY]) {
+				assert.ok(Math.abs(delta) < 1, `Label center differs by ${delta}px`)
+			}
+		}
+	}
 	const initial = await measure()
+	assertCentered(initial)
 
 	assert.match(initial.preview.shadow, /6px 8px 14px 4px inset/)
 	assert.equal(initial.control.shadow, 'none')
@@ -58,6 +75,7 @@ try {
 			}
 
 			const state = await measure()
+			assertCentered(state)
 
 			assert.equal(state.preview.radius, rounded ? '24px' : '0px')
 			assert.equal(state.preview.overflow, clipped ? 'hidden' : 'visible')

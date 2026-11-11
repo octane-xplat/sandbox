@@ -10,8 +10,8 @@ body { margin: 0; font-family: system-ui, sans-serif; background-color: #f1f5f9;
 .notice { color: #9a3412; }
 .comparison { gap: 24px; flex-wrap: wrap; padding: 16px 0; }
 .sample-column { display: flex; flex-direction: column; gap: 8px; }
-.sample { width: 140px; height: 110px; background-color: #e2e8f0; border-width: 2px; border-style: solid; border-color: #64748b; align-items: center; justify-content: center; position: relative; }
-.overflow-marker { position: absolute; right: -14px; bottom: -10px; width: 54px; height: 30px; background-color: #fdba74; align-items: center; justify-content: center; }
+.sample { display: flex; width: 140px; height: 110px; background-color: #e2e8f0; border-width: 2px; border-style: solid; border-color: #64748b; align-items: center; justify-content: center; position: relative; }
+.overflow-marker { display: flex; position: absolute; right: -14px; bottom: -10px; width: 54px; height: 30px; background-color: #fdba74; align-items: center; justify-content: center; }
 .control { gap: 10px; align-items: center; }
 .control-label { min-width: 110px; }
 .btn { padding: 8px 12px; background-color: #dbeafe; border-radius: 8px; }
