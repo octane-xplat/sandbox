@@ -111,11 +111,31 @@ try {
 		() => document.querySelector('#svg-tinted').getBoundingClientRect().width === 24,
 	)
 
+	const narrowLayouts = []
+	for (const width of [375, 428, 768]) {
+		await page.setViewportSize({ width, height: 926 })
+		const layout = await page.evaluate(() => ({
+			viewport: innerWidth,
+			scrollWidth: document.documentElement.scrollWidth,
+			boxes: [...document.querySelectorAll('.card, .controls button, #svg-description')].map((host) => {
+				const rect = host.getBoundingClientRect()
+				return { id: host.id || host.dataset.testid, x: rect.x, width: rect.width, height: rect.height }
+			}),
+		}))
+		assert.ok(layout.scrollWidth <= width, 'document must not overflow horizontally')
+		for (const box of layout.boxes) {
+			assert.ok(box.x >= -1 && box.x + box.width <= width + 1, 'card/control must fit viewport: ' + box.id)
+		}
+		if (width <= 428) {
+			assert.ok(layout.boxes.find((box) => box.id === 'svg-description').height > 30)
+		}
+		narrowLayouts.push(layout)
+	}
 	assert.equal(await page.locator('#svg-unknown').count(), 0)
 	assert.deepEqual(errors, [])
 	console.log(
 		JSON.stringify(
-			{ initial, changed, failed, events, restored: await measure(), pageErrors: errors },
+			{ initial, changed, failed, events, restored: await measure(), narrowLayouts, pageErrors: errors },
 			null,
 			2,
 		),

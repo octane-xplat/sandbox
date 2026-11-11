@@ -18,9 +18,9 @@ export function App() @{
 	const [missing, setMissing] = useState(false)
 	const [mounted, setMounted] = useState(true)
 
-	<SafeArea>
-		<ScrollableArea>
-			<VStack className="app">
+	<SafeArea id="svg-page" className="page">
+		<ScrollableArea id="svg-scroll" className="viewport">
+			<VStack id="svg-content" className="app">
 				<Text className="title">Imported SVG lab</Text>
 				<Text>One authored compass, three supported render paths.</Text>
 				<HStack className="controls">
@@ -33,9 +33,9 @@ export function App() @{
 					/>
 				</HStack>
 				<Text testID="svg.settings">{'size=' + size + '; color=' + color}</Text>
-				<VStack className="card">
+				<VStack id="svg-card-tinted" className="card">
 					<Text className="heading">Tintable registered Icon</Text>
-					<Text>
+					<Text id="svg-description">
 						?raw → inner markup → registry. Ring stroke and needle fill use currentColor. Amber
 						center and brown stroke stay fixed.
 					</Text>
@@ -48,7 +48,7 @@ export function App() @{
 						accessibilityLabel="Tintable imported compass"
 					/>
 				</VStack>
-				<VStack className="card">
+				<VStack id="svg-card-asset" className="card">
 					<Text className="heading">Default import → Icon.src</Text>
 					<Text>Asset source. Icon.color does not recolor an external SVG image.</Text>
 					<Icon
@@ -60,7 +60,7 @@ export function App() @{
 						accessibilityLabel="Asset imported compass"
 					/>
 				</VStack>
-				<VStack className="card">
+				<VStack id="svg-card-image" className="card">
 					<Text className="heading">Default import → Image.src</Text>
 					<Text>
 						Toggle a missing file URL, then restore. No shared SVG load/error callbacks or
