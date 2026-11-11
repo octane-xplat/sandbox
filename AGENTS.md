@@ -8,6 +8,80 @@ Before writing code, read `.agents/skills/xplat/SKILL.md` (or invoke the
 `xplat` skill). Its invariants are enforced by `pnpm lint` — violations
 usually still compile but silently break on one platform.
 
+## One fresh worktree per experiment
+
+`main` is the blank-slate starter. Keep it ready for the next experiment:
+framework upgrades, shared tooling, and these instructions may change there,
+but experiment screens, dependencies, and results belong on experiment branches.
+Do not merge experiments into `main` unless the user explicitly asks.
+
+When the user asks to try something new, start a new task in a new worktree
+on a fresh branch based on the latest `origin/main`. This request authorizes
+creating that experiment's task, branch, and worktree. Never base a new
+experiment on the current experiment branch or reuse another experiment's
+worktree. Continue an existing experiment in its own task and worktree when
+the user is asking for a follow-up. An experiment task must not create another
+task just to begin its assigned experiment.
+
+1. Identify the canonical sandbox checkout (locally,
+   `~/dev/octane-xplat/sandbox`) and inspect its status and worktrees. Fetch
+   the baseline without switching branches or changing existing work:
+
+   ```sh
+   git -C /path/to/sandbox status --short --branch
+   git -C /path/to/sandbox worktree list
+   git -C /path/to/sandbox fetch origin main
+   ```
+
+   Use the fetched `origin/main` as the base. If it cannot be fetched, report
+   the blocker instead of silently starting from an experiment or stale base.
+   Preserve all existing branches, worktrees, and uncommitted changes.
+
+2. Prefer Goddard when `goddard-agent` is available. Check its installed
+   `create --help`, then request a **worktree** task with the base explicit:
+
+   ```sh
+   goddard-agent create --project /path/to/sandbox \
+     --workspace worktree --base-branch origin/main \
+     --text 'Experiment: REPLACE_WITH_GOAL. Work only in this assigned worktree and fresh branch. Read AGENTS.md. Implement and verify the experiment, commit the result, and report the branch, worktree path, and checks. Do not merge into main or create another task for this experiment.'
+   ```
+
+   Replace the path and goal before running. Let Goddard allocate the fresh
+   branch and worktree; do not first create another branch or worktree for
+   the same experiment. Give the new task the user's full requirements,
+   relevant context, and any requested local framework checkout. Verify the
+   allocated branch and worktree start from the fetched baseline. Hand the
+   experiment to that task and link it in the reply. A task-creation receipt
+   is not evidence that the experiment itself has finished.
+
+3. If Goddard is unavailable, prefer an equivalent task launcher that can
+   explicitly create a fresh branch and worktree from `origin/main`. Inspect
+   its help rather than inventing flags. If no launcher can manage worktrees,
+   create one with Git, using a unique descriptive name for each experiment:
+
+   ```sh
+   git -C /path/to/sandbox worktree add \
+     -b experiment/counter-20261111-01 \
+     /path/to/sandbox-worktrees/counter-20261111-01 origin/main
+   ```
+
+   Choose an unused branch and sibling directory; never use force, reset an
+   existing branch, or overwrite a worktree. Start a new agent task bound to
+   that worktree with the available task runner. If tasks can only be opened
+   manually, report the new branch and absolute worktree path so the user can
+   open it as a new task. Do not implement the experiment in the main checkout.
+   If a launcher fails with an uncertain outcome, inspect existing tasks and
+   worktrees before retrying or falling back, to avoid duplicate experiments.
+
+4. Install dependencies inside the new worktree with
+   `pnpm install --frozen-lockfile`. Local framework linking is optional and
+   must be configured separately in each worktree; follow
+   [links/README.md](links/README.md). Do not copy another worktree's
+   `node_modules` or assume its ignored checkout link is present. Keep all
+   experiment changes and commits on the assigned branch. Report actual
+   checks and leave the branch and worktree available for the user; do not
+   remove them automatically.
+
 ## Framework versions
 
 Keep framework/compiler/native tool pins in the supplied `catalog:xplat`.
