@@ -72,19 +72,66 @@ function FetchLabel(props: { fail?: boolean }) @{
 }
 
 describe('starter app on device', () => {
-  it('mounts, reacts to a tap, and unmounts cleanly', async () => {
+  it('updates and clears inset shadow on the native Mason host', async () => {
     const { view, host, unmount } = await mountXplat(App)
+    const preview = findByTestId(view, 'shadow.preview')!
+    const control = findByTestId(view, 'shadow.control')!
+    // Mason's helper reads the native-backed style, not merely the input prop.
+    const paint = (target: any) => target._styleHelper.boxShadow as string
 
-    const increment = findByTestId(view, 'counter.increment')
-    const count = findByTestId<TextInputView>(view, 'counter.value')
+    await waitUntil(() => paint(preview).includes('inset'))
+    expect(paint(preview)).toContain('6px 8px 14px 4px')
+    expect(paint(control)).toBe('none')
 
-    expect(increment?.isLoaded, 'counter.increment resolves to a loaded native view').toBe(true)
+    const initialSize = preview.getActualSize()
 
-    await tap(increment!)
-    await waitUntil(() => count?.text === '1', {
-      message: 'tap did not reach the increment Pressable',
-    })
+    console.log('SHADOW_NATIVE_INITIAL', paint(preview), initialSize, control.getActualSize())
+    expect(initialSize.width).toBeGreaterThan(0)
+    expect(initialSize.height).toBeGreaterThan(0)
+    expect(initialSize.width).toBeCloseTo(control.getActualSize().width, 0)
+    expect(initialSize.height).toBeCloseTo(control.getActualSize().height, 0)
+    for (const name of ['x', 'y', 'blur', 'spread']) {
+      await tap(findByTestId(view, 'shadow.' + name + '.plus')!)
+      await nextRenderPass()
+    }
 
+    await waitUntil(() => paint(preview).includes('8px 10px 16px 6px'))
+    await tap(findByTestId(view, 'shadow.color.00000080')!)
+    await waitUntil(() => paint(preview).includes('#00000080'))
+    for (const rounded of [true, false]) {
+      for (const clipped of [false, true]) {
+        await tap(findByTestId(view, 'shadow.reset')!)
+        await nextRenderPass()
+        if (!rounded) {
+          await tap(findByTestId(view, 'shadow.rounded')!)
+        }
+
+        if (clipped) {
+          await tap(findByTestId(view, 'shadow.clip')!)
+        }
+
+        await nextRenderPass()
+
+        const helper = (preview as any)._styleHelper
+
+        console.log(
+          'SHADOW_NATIVE_SHAPE',
+          rounded,
+          clipped,
+          helper.borderRadius,
+          helper.overflow,
+          paint(preview),
+          preview.getActualSize(),
+        )
+
+        expect(paint(preview)).toContain('inset')
+        expect(String(helper.borderRadius)).toContain(rounded ? '24' : '0')
+        expect(helper.overflow).toBe(clipped ? 'hidden' : 'visible')
+      }
+    }
+
+    await tap(findByTestId(view, 'shadow.toggle')!)
+    await waitUntil(() => paint(preview) === 'none')
     await unmount()
     await nextRenderPass()
     expect(host.content).toBe(null)

@@ -1,113 +1,18 @@
-/* This starter leaves the optional UI chrome stylesheet out. Define this
- * app's palette here; the required tokens.css supplies layout structure. */
-
-:root,
-.ns-root {
-	--color-primary: #171717;
-	--color-onprimary: #fafafa;
-	--color-surface: #ffffff;
-	--color-text: #0a0a0a;
+:root, .ns-root {
+  --color-primary: #334155;
+  --color-onprimary: #ffffff;
+  --color-surface: #f1f5f9;
+  --color-text: #0f172a;
 }
-
-.dark,
-.ns-dark {
-	--color-primary: #ededed;
-	--color-onprimary: #171717;
-	--color-surface: #0a0a0a;
-	--color-text: #ededed;
-}
-
-body {
-	margin: 0;
-	font-family: system-ui, sans-serif;
-	background-color: var(--color-surface);
-}
-
-/* System-dark before JS mounts — no white flash. .app.light below is the
- * manual override back. */
-@media (prefers-color-scheme: dark) {
-	:root {
-		--color-primary: #ededed;
-		--color-onprimary: #171717;
-		--color-surface: #0f172a;
-		--color-text: #f8fafc;
-	}
-	body {
-		background-color: var(--color-surface);
-	}
-}
-
-/* Manual light override when the system is dark (JS adds .light). */
-.app.light {
-	--color-primary: #171717;
-	--color-onprimary: #fafafa;
-	--color-surface: #ffffff;
-	--color-text: #111827;
-}
-
-.app {
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 20px;
-	background-color: var(--color-surface);
-	color: var(--color-text);
-}
-
-.app Text {
-	color: var(--color-text);
-}
-
-.title {
-	font-size: 28px;
-	font-weight: bold;
-}
-
-.muted {
-	opacity: 0.65;
-}
-
-.counter {
-	align-items: center;
-	gap: 24px;
-}
-
-.count {
-	font-size: 32px;
-	font-weight: bold;
-	min-width: 48px;
-	text-align: center;
-}
-
-.btn {
-	background-color: var(--color-primary);
-	color: var(--color-onprimary);
-	padding: 10px 20px;
-	border-radius: 10px;
-	corner-shape: squircle;
-	font-size: 20px;
-}
-
-.chip {
-	background-color: var(--color-primary);
-	color: var(--color-onprimary);
-	padding: 6px 14px;
-	border-radius: 14px;
-	corner-shape: squircle;
-	font-size: 14px;
-}
-
-.vx-list {
-	flex-direction: row;
-	flex-wrap: wrap;
-	justify-content: center;
-	gap: 8px;
-	max-width: 420px;
-	flex-grow: 0;
-}
-
-.link {
-	opacity: 0.7;
-}
+body { margin: 0; font-family: system-ui, sans-serif; background-color: #f1f5f9; }
+.app { display: flex; flex-direction: column; padding: 20px; gap: 12px; background-color: #f1f5f9; color: #0f172a; }
+.title { font-size: 26px; font-weight: bold; }
+.notice { color: #9a3412; }
+.comparison { gap: 24px; flex-wrap: wrap; padding: 16px 0; }
+.sample-column { display: flex; flex-direction: column; gap: 8px; }
+.sample { width: 140px; height: 110px; background-color: #e2e8f0; border-width: 2px; border-style: solid; border-color: #64748b; align-items: center; justify-content: center; position: relative; }
+.overflow-marker { position: absolute; right: -14px; bottom: -10px; width: 54px; height: 30px; background-color: #fdba74; align-items: center; justify-content: center; }
+.control { gap: 10px; align-items: center; }
+.control-label { min-width: 110px; }
+.btn { padding: 8px 12px; background-color: #dbeafe; border-radius: 8px; }
+.actions { gap: 8px; flex-wrap: wrap; }
