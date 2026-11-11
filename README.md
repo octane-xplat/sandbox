@@ -123,6 +123,19 @@ local network use for development testing. Allow Local Network access if iOS
 asks. Both values are optional; existing simulator/Android defaults remain.
 No machine address is saved in source or the lockfile.
 
+After device tests, launch the interactive app through NativeScript:
+
+```sh
+pnpm dev:ios --device <UDID> --no-watch --no-hmr --justlaunch
+```
+
+Run that command inside the physical-device + native-build reservation above.
+The tests mount App temporarily, then return to the Vitest runner. Installing a
+fresh debug IPA alone can still open that runner: NativeScript's device-side
+`Library/Application Support/LiveSync/app` files survive app updates and override
+the packaged entry. The normal `ns run` command syncs the demo entry and restarts
+the app. Do not erase the phone or delete its app data to switch screens.
+
 The physical iPhone run passed all 9 ordinary tests plus 1 expected failure.
 The SVG case checks native decoder objects, dimensions, tint source changes and
 remounting. It does not inspect pixels or establish native painted colors.
