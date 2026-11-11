@@ -1,3 +1,5 @@
+import '@octane-xplat/ui/theme/tokens.css'
+import './style.css'
 // Test bundle entry — `ns test` builds with --env.unitTesting, and the
 // xplatNative preset swaps the app entry (src/main.ts) for this file, so the
 // device boots the Vitest coordinator instead of the app.
@@ -11,6 +13,7 @@ import {
 import { createVitestHostPage } from '@nativescript/unit-test-runner/testing'
 
 const coordinator = new NativeScriptVitestCoordinator({
+  port: 17883,
   // Every spec matched by vitest.config.mts `include` must also match this
   // glob — vite statically bundles each as a lazily imported chunk that the
   // registry loads on demand.

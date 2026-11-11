@@ -22,7 +22,8 @@
 		"workshop": "xplat workshop dev --target web",
 		"dev:octane": "node links/dev-octane.cjs",
 		"test:links": "node --test links/octane.test.cjs",
-		"dev:published": "node links/published.cjs"
+		"dev:published": "node links/published.cjs",
+		"test:layout:web": "node scripts/verify-layout.web.mjs"
 	},
 	"dependencies": {
 		"@nativescript-community/octane": "catalog:xplat",
@@ -47,6 +48,7 @@
 		"jsdom": "catalog:xplat",
 		"nativescript": "catalog:xplat",
 		"octane-xplat": "catalog:xplat",
+		"playwright": "1.65.0",
 		"typescript-classic": "catalog:xplat",
 		"vite": "catalog:xplat",
 		"vitest": "catalog:xplat"

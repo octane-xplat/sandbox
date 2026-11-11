@@ -75,14 +75,14 @@ describe('starter app on device', () => {
   it('mounts, reacts to a tap, and unmounts cleanly', async () => {
     const { view, host, unmount } = await mountXplat(App)
 
-    const increment = findByTestId(view, 'counter.increment')
-    const count = findByTestId<TextInputView>(view, 'counter.value')
+    const increment = findByTestId(view, 'fit.long')
+    const count = findByTestId<TextInputView>(view, 'fit.wrapped.text')
 
-    expect(increment?.isLoaded, 'counter.increment resolves to a loaded native view').toBe(true)
+    expect(increment?.isLoaded, 'fit.long resolves to a loaded native view').toBe(true)
 
     await tap(increment!)
-    await waitUntil(() => count?.text === '1', {
-      message: 'tap did not reach the increment Pressable',
+    await waitUntil(() => count?.text?.startsWith('A longer message') === true, {
+      message: 'tap did not reach the long-text Pressable',
     })
 
     await unmount()

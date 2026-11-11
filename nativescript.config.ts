@@ -1,7 +1,7 @@
 import { NativeScriptConfig } from '@nativescript/core'
 
 export default {
-  id: 'org.octanexplat.sandbox',
+  id: 'org.octanexplat.fittext',
   appPath: 'src',
   appResourcesPath: 'App_Resources',
   // Keep NativeScript's installs on the same package manager as the app.
