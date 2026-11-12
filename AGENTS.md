@@ -82,6 +82,22 @@ task just to begin its assigned experiment.
    checks and leave the branch and worktree available for the user; do not
    remove them automatically.
 
+## Report framework defects upstream
+
+Report any framework defects encountered while constructing or verifying a
+sandbox to [octane-xplat/octane-xplat](https://github.com/octane-xplat/octane-xplat/issues).
+This applies even when a local workaround lets the sandbox proceed.
+
+Before filing, search both open and closed upstream issues for the same
+symptoms, affected APIs, and error messages, and read likely matches. If an
+existing issue covers the defect, reference it in the sandbox's handoff and
+add only useful new reproduction details to that issue; do not file a duplicate.
+Otherwise, create an upstream issue with a minimal reproduction, expected and
+actual behavior, affected platforms, framework versions or checkout commit,
+and relevant sanitized logs. Distinguish confirmed defects from suspected ones.
+Include the upstream issue link in the sandbox's handoff. If reporting is
+blocked, state the blocker and preserve the details needed to file it.
+
 ## Framework versions
 
 Keep framework/compiler/native tool pins in the supplied `catalog:xplat`.
