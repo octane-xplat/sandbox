@@ -22,7 +22,12 @@
 		"workshop": "xplat workshop dev --target web",
 		"dev:octane": "node links/dev-octane.cjs",
 		"test:links": "node --test links/octane.test.cjs",
-		"dev:published": "node links/published.cjs"
+		"dev:published": "node links/published.cjs",
+		"profile:build:android": "python3 tools/profiling/profile_grid.py build android",
+		"profile:build:ios": "python3 tools/profiling/profile_grid.py build ios",
+		"profile:android": "python3 tools/profiling/profile_grid.py record android",
+		"profile:ios": "python3 tools/profiling/profile_grid.py record ios",
+		"test:profiling": "python3 -m unittest discover -s tools/profiling -p \"test_*.py\""
 	},
 	"dependencies": {
 		"@nativescript-community/octane": "catalog:xplat",

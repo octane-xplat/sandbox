@@ -12,9 +12,12 @@ import {
 } from '@octane-xplat/ui'
 
 import { regularRows, stressRows, type GridItem, type GridRow } from './grid-data'
+import { runGridProfile } from './grid-profile'
+import { readGridProfile, beginGridProfile, endGridProfile } from './profile-platform'
 
 export function App() {
-	const stress$ = useSignal$(false)
+	const profile = useRef(readGridProfile())
+	const stress$ = useSignal$(profile.current?.dataset === 10001)
 	const selected$ = useSignal$(new Set<string>())
 	const list = useRef<VirtualListHandle | null>(null)
 	const rows = stress$.get() ? stressRows : regularRows
@@ -43,6 +46,23 @@ export function App() {
 			list.current?.scrollToItem(key, { align: 'end' })
 		}, 200)
 	}
+
+	useEffect(() => {
+		if (!profile.current) {
+			return
+		}
+
+		return runGridProfile(profile.current, {
+			begin: beginGridProfile,
+			end: endGridProfile,
+			scroll: (offset) => list.current?.scrollToOffset(offset, { animated: true }),
+			first: () => {
+				cancelSeek()
+				list.current?.scrollToOffset(0)
+			},
+			last: jumpToLast,
+		})
+	}, [])
 
 	function toggle(item: GridItem) {
 		selected$.set((current) => {

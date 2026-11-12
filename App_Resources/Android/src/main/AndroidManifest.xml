@@ -22,6 +22,8 @@
 		android:theme="@style/AppTheme"
 		android:hardwareAccelerated="true">
 
+		<profileable android:shell="true"/>
+
 		<activity
 			android:name="com.tns.NativeScriptActivity"
 			android:label="@string/title_activity_kimera"

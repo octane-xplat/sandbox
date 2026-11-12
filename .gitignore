@@ -10,3 +10,5 @@ hooks/
 !.env.example
 links/octane-xplat
 .ns-vite-build/
+
+__pycache__/

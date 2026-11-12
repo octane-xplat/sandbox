@@ -53,3 +53,11 @@ NS_TEST_HOST=0.0.0.0 VITE_NATIVE_TEST_URL=ws://COMPUTER_LAN_IP:17878 \
 ```
 
 The URL is supplied only to the test entry. No machine address is saved in source.
+
+## Frame timing
+
+Use the [native profiling commands](tools/profiling/README.md) to build release
+profiling apps and record repeated scroll or jump workloads on physical phones.
+The commands save native traces, per-run JSON, a report, and build provenance.
+Android reports native jank/drop rates and frame timings; iOS reports native
+hitches and frame lifetimes. Screenshots and in-app FPS estimates are not used.
