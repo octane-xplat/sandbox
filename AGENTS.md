@@ -15,6 +15,14 @@ framework upgrades, shared tooling, and these instructions may change there,
 but experiment screens, dependencies, and results belong on experiment branches.
 Do not merge experiments into `main` unless the user explicitly asks.
 
+Whenever you create commits in this sandbox, push the committed branch to
+`origin` before handing the work back. This applies to experiment branches
+and permitted changes on `main`. Use `git push -u origin HEAD` for the first
+push and `git push origin HEAD` for subsequent pushes. Creating commits also
+authorizes pushing that branch; do not leave completed commits only locally.
+If a push fails, report the blocker and preserve the local commits. Do not
+force-push to resolve a rejection.
+
 When the user asks to try something new, start a new task in a new worktree
 on a fresh branch based on the latest `origin/main`. This request authorizes
 creating that experiment's task, branch, and worktree. Never base a new
@@ -43,7 +51,7 @@ task just to begin its assigned experiment.
    ```sh
    goddard-agent create --project /path/to/sandbox \
      --workspace worktree --base-branch origin/main \
-     --text 'Experiment: REPLACE_WITH_GOAL. Work only in this assigned worktree and fresh branch. Read AGENTS.md. Implement and verify the experiment, commit the result, and report the branch, worktree path, and checks. Do not merge into main or create another task for this experiment.'
+     --text 'Experiment: REPLACE_WITH_GOAL. Work only in this assigned worktree and fresh branch. Read AGENTS.md. Implement and verify the experiment, commit the result, push the branch to origin, and report the branch, worktree path, and checks. Do not merge into main or create another task for this experiment.'
    ```
 
    Replace the path and goal before running. Let Goddard allocate the fresh
