@@ -1,0 +1,7 @@
+/* A list of absolutely positioned rows supplies no intrinsic width. Give the
+   isolated native rendering probe a definite viewport on both platforms. */
+.scroll-render-probe {
+  width: 320px;
+  height: 360px;
+  flex-shrink: 0;
+}

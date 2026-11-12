@@ -1,8 +1,29 @@
 diff --git a/src/components/collections/VirtualList.tsrx b/src/components/collections/VirtualList.tsrx
-index 9aca83966a93b3e6e875048ba382f21db847aa19..cac9cd0f1f1003bddb5475fefc40fce23e2768ab 100644
+index 9aca83966a93b3e6e875048ba382f21db847aa19..4408967f60c7d4763dcbd94dfefc860e19d554d5 100644
 --- a/src/components/collections/VirtualList.tsrx
 +++ b/src/components/collections/VirtualList.tsrx
-@@ -115,6 +115,7 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
+@@ -73,6 +73,20 @@ function scheduleListFrame(callback: () => void): () => void {
+   }
+ }
+ 
++// Own the rendered subtree at the logical-row boundary. Window changes can
++// reposition its physical cell without rebuilding unchanged item content.
++function VirtualListItem<T>(props: {
++  entry: VirtualListEntry<T>
++  renderItem: VirtualListProps<T>['renderItem']
++}): unknown @{
++  const content = useMemo(
++    () => props.renderItem(props.entry.item, props.entry.index),
++    [props.entry, props.renderItem],
++  )
++
++  <>{content}</>
++}
++
+ interface VirtualListAnchor {
+   rowKey: string
+   index: number
+@@ -115,6 +129,7 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
    const estimateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
    const frameCancelRef = useRef<(() => void) | null>(null)
    const viewportFrameCancelRef = useRef<(() => void) | null>(null)
@@ -10,7 +31,7 @@ index 9aca83966a93b3e6e875048ba382f21db847aa19..cac9cd0f1f1003bddb5475fefc40fce2
    const disposedRef = useRef(false)
    const pendingOffsetDeltaRef = useRef(0)
    const measurementsRef = useRef(
-@@ -305,19 +306,20 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
+@@ -305,19 +320,20 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
          }
  
          if (measurement.view?.isLoaded === false) {
@@ -35,7 +56,7 @@ index 9aca83966a93b3e6e875048ba382f21db847aa19..cac9cd0f1f1003bddb5475fefc40fce2
          }
        }
  
-@@ -602,13 +604,13 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
+@@ -602,13 +618,13 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
    }
  
    function syncViewport(view = scrollRef.current) {
@@ -51,7 +72,7 @@ index 9aca83966a93b3e6e875048ba382f21db847aa19..cac9cd0f1f1003bddb5475fefc40fce2
        return
      }
  
-@@ -765,6 +767,8 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
+@@ -765,6 +781,8 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
      disposedRef.current = false
      return () => {
        disposedRef.current = true
@@ -60,7 +81,7 @@ index 9aca83966a93b3e6e875048ba382f21db847aa19..cac9cd0f1f1003bddb5475fefc40fce2
        frameCancelRef.current?.()
        viewportFrameCancelRef.current?.()
        viewportFrameCancelRef.current = null
-@@ -830,8 +834,22 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
+@@ -830,8 +848,22 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
          measuredAssignmentsRef.current.delete(id)
        }
      }
@@ -83,3 +104,12 @@ index 9aca83966a93b3e6e875048ba382f21db847aa19..cac9cd0f1f1003bddb5475fefc40fce2
    const style = { ...styleRecord(props.style), minHeight: styleRecord(props.style)?.minHeight ?? 0 }
  
    <scrollview
+@@ -917,7 +949,7 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
+                     className="vx-virtual-list-item"
+                     style={mergeStyle({ flexDirection: 'column' }, { display: 'flex' })}
+                   >
+-                    {props.renderItem(entry.item, entry.index)}
++                    <VirtualListItem entry={entry} renderItem={props.renderItem} />
+                   </masonview>
+                   {hasSeparator && entry.index < entries.length - 1 ? (
+                     <masonview

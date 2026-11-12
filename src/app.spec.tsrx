@@ -78,7 +78,11 @@ describe('grid app on device', () => {
     const row = (number: number) => findByTestId(view, `grid.row.sample-${number}`)
 
     await waitUntil(() => (viewport.getActualSize().height ?? 0) > 0)
-    await new Promise((resolve) => setTimeout(resolve, 300))
+    await waitUntil(() => {
+      const first = row(1)?.getLocationOnScreen()?.y
+      const third = row(5)?.getLocationOnScreen()?.y
+      return first !== undefined && third !== undefined && Math.abs(third - first - 288) < 1
+    }, { message: 'initial native row positions did not settle' })
     const viewportSize = viewport.getActualSize()
     const viewportPosition = viewport.getLocationOnScreen()
     const snapshot = [1, 3, 5].map((number) => {
@@ -117,6 +121,7 @@ describe('grid app on device', () => {
 		expect(!!item(1001)).toBe(false)
 		await tap(item(1)!)
 		await waitUntil(() => viewText(view).includes('1 selected'))
+		await waitUntil(() => viewText(item(1)!).includes('Selected'))
 
 		await tap(findByTestId(view, 'grid.last')!)
 		await waitUntil(() => !!item(1001)?.isLoaded, { message: 'last row did not mount' })
@@ -130,6 +135,7 @@ describe('grid app on device', () => {
 		expect(viewText(item(1)!)).toContain('Selected')
 		await tap(item(1)!)
 		await waitUntil(() => viewText(view).includes('0 selected'))
+		await waitUntil(() => viewText(item(1)!).includes('Tap to select'))
 
 		await tap(findByTestId(view, 'grid.stress')!)
 		await waitUntil(() => viewText(view).join(' ').includes('10,001 items'))

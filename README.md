@@ -65,6 +65,14 @@ hitches and frame lifetimes. Screenshots and in-app FPS estimates are not used.
 The branch includes a pinned `@octane-xplat/ui@0.20.0` compatibility patch for
 native list measurement. It uses committed Mason geometry, retries hosts that
 are not ready, and requests native layout after row offsets change. The device
-suite checks initial viewport coverage and row spacing as well as deep seeks.
+patch also caches rendered content at each logical row, so moving the scroll
+window does not rebuild unchanged item content. Changed entries and rendering
+callbacks still invalidate that content, and off-window rows still unmount.
+The device suite checks retained-row rendering, immediate selection updates,
+initial row spacing, deep seeks, and viewport coverage during gentle and fast
+continuous scrolling. Coverage samples do not measure frame pacing or fling
+physics.
 The shared-framework follow-up is tracked in
-[issue #2](https://github.com/octane-xplat/sandbox/issues/2).
+[issue #2](https://github.com/octane-xplat/sandbox/issues/2) for geometry and
+[issue #3](https://github.com/octane-xplat/sandbox/issues/3) for retained-row
+rendering.
