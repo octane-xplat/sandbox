@@ -93,6 +93,7 @@ patchedDependencies:
   "@nativescript/doctor@2.0.18": patches/@nativescript__doctor@2.0.18.patch
   "@sveltejs/acorn-typescript@1.0.13": patches/@sveltejs__acorn-typescript@1.0.13.patch
   "@nativescript-community/sqlite-bridge@4.1.1": patches/@nativescript-community__sqlite-bridge@4.1.1.patch
+  '@octane-xplat/ui@0.20.0': patches/@octane-xplat__ui@0.20.0.patch
 allowUnusedPatches: true
 allowBuilds:
   "@nativescript/core": false

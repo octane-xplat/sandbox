@@ -61,3 +61,10 @@ profiling apps and record repeated scroll or jump workloads on physical phones.
 The commands save native traces, per-run JSON, a report, and build provenance.
 Android reports native jank/drop rates and frame timings; iOS reports native
 hitches and frame lifetimes. Screenshots and in-app FPS estimates are not used.
+
+The branch includes a pinned `@octane-xplat/ui@0.20.0` compatibility patch for
+native list measurement. It uses committed Mason geometry, retries hosts that
+are not ready, and requests native layout after row offsets change. The device
+suite checks initial viewport coverage and row spacing as well as deep seeks.
+The shared-framework follow-up is tracked in
+[issue #2](https://github.com/octane-xplat/sandbox/issues/2).

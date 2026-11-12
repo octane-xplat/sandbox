@@ -1,0 +1,85 @@
+diff --git a/src/components/collections/VirtualList.tsrx b/src/components/collections/VirtualList.tsrx
+index 9aca83966a93b3e6e875048ba382f21db847aa19..cac9cd0f1f1003bddb5475fefc40fce23e2768ab 100644
+--- a/src/components/collections/VirtualList.tsrx
++++ b/src/components/collections/VirtualList.tsrx
+@@ -115,6 +115,7 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
+   const estimateTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+   const frameCancelRef = useRef<(() => void) | null>(null)
+   const viewportFrameCancelRef = useRef<(() => void) | null>(null)
++  const layoutFrameCancelRef = useRef<(() => void) | null>(null)
+   const disposedRef = useRef(false)
+   const pendingOffsetDeltaRef = useRef(0)
+   const measurementsRef = useRef(
+@@ -305,19 +306,20 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
+         }
+ 
+         if (measurement.view?.isLoaded === false) {
+-          continue
+-        }
+-
+-        if (measurement.view?.isLayoutValid === false) {
+           measurementsRef.current.set(measurement.entry.rowKey, measurement)
+           refreshWindow()
+           continue
+         }
+ 
++        // Mason commits geometry independently of NativeScript's legacy
++        // isLayoutValid flag, which can remain false on iOS after layout.
+         const size = measurement.view?.getActualSize?.() ?? measurement
+ 
+         if (size.width > 0 && size.height >= 0) {
+           recordRowSize(measurement.entry.rowKey, size.width, size.height)
++        } else {
++          measurementsRef.current.set(measurement.entry.rowKey, measurement)
++          refreshWindow()
+         }
+       }
+ 
+@@ -602,13 +604,13 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
+   }
+ 
+   function syncViewport(view = scrollRef.current) {
+-    if (!view || view.isLoaded === false || view.isLayoutValid === false) {
++    if (!view || view.isLoaded === false) {
+       return
+     }
+ 
+     const size = view.getActualSize?.()
+ 
+-    if (!size) {
++    if (!size || size.width <= 0 || size.height <= 0) {
+       return
+     }
+ 
+@@ -765,6 +767,8 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
+     disposedRef.current = false
+     return () => {
+       disposedRef.current = true
++      layoutFrameCancelRef.current?.()
++      layoutFrameCancelRef.current = null
+       frameCancelRef.current?.()
+       viewportFrameCancelRef.current?.()
+       viewportFrameCancelRef.current = null
+@@ -830,8 +834,22 @@ export function VirtualList<T = any>(props: VirtualListProps<T>): unknown @{
+         measuredAssignmentsRef.current.delete(id)
+       }
+     }
++
+   }, [cells])
+ 
++  useEffect(() => {
++    void windowVersion
++    // Commit changed absolute offsets after the current native layout and
++    // batched style writes, even when row host sizes stay the same.
++    layoutFrameCancelRef.current?.()
++    layoutFrameCancelRef.current = scheduleListFrame(() => {
++      layoutFrameCancelRef.current = null
++      if (!disposedRef.current) {
++        scrollRef.current?.requestLayout?.()
++      }
++    })
++  }, [windowVersion])
++
+   const style = { ...styleRecord(props.style), minHeight: styleRecord(props.style)?.minHeight ?? 0 }
+ 
+   <scrollview

@@ -72,6 +72,33 @@ function FetchLabel(props: { fail?: boolean }) @{
 }
 
 describe('grid app on device', () => {
+  it('fills the initial viewport with consecutive two-column rows', async () => {
+    const { view } = await mountXplat(App)
+    const viewport = findByTestId(view, 'grid.viewport')!
+    const row = (number: number) => findByTestId(view, `grid.row.sample-${number}`)
+
+    await waitUntil(() => (viewport.getActualSize().height ?? 0) > 0)
+    await new Promise((resolve) => setTimeout(resolve, 300))
+    const viewportSize = viewport.getActualSize()
+    const viewportPosition = viewport.getLocationOnScreen()
+    const snapshot = [1, 3, 5].map((number) => {
+      const target = row(number)
+      return { number, loaded: target?.isLoaded, layoutValid: target?.isLayoutValid, size: target?.getActualSize(), position: target?.getLocationOnScreen() }
+    })
+    const evidence = JSON.stringify({ viewportSize, viewportPosition, viewportLayoutValid: viewport.isLayoutValid, rows: snapshot })
+    console.log('Grid initial native layout: ' + evidence)
+
+    expect(viewportSize.height, evidence).toBeCloseTo(360, 0)
+    for (const number of [1, 3, 5]) {
+      const target = row(number)
+      expect(target?.isLoaded, evidence).toBe(true)
+      expect(target!.getActualSize().height, evidence).toBeCloseTo(144, 0)
+      expect(target!.getLocationOnScreen().y, evidence).toBeLessThan(viewportPosition.y + viewportSize.height)
+    }
+    expect(row(3)!.getLocationOnScreen().y - row(1)!.getLocationOnScreen().y, evidence).toBeCloseTo(144, 0)
+    expect(row(5)!.getLocationOnScreen().y - row(1)!.getLocationOnScreen().y, evidence).toBeCloseTo(288, 0)
+  })
+
 	it('virtualizes paired rows and preserves selection after a deep seek', async () => {
 		const { view, host, unmount } = await mountXplat(App)
 		const item = (number: number) => findByTestId(view, `grid.item.sample-${number}`)
