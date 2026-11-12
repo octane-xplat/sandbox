@@ -2,6 +2,8 @@
 // xplatNative preset swaps the app entry (src/main.tsrx) for this file, so the
 // device boots the Vitest coordinator instead of the app.
 import '@valor/nativescript-websockets'
+import '@octane-xplat/ui/theme/tokens.css'
+import './style.css'
 import { Application } from '@nativescript/core'
 import {
   NativeScriptVitestCoordinator,

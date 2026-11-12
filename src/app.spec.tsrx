@@ -71,24 +71,50 @@ function FetchLabel(props: { fail?: boolean }) @{
   <Text>{'fetch: ' + state}</Text>
 }
 
-describe('starter app on device', () => {
-  it('mounts, reacts to a tap, and unmounts cleanly', async () => {
-    const { view, host, unmount } = await mountXplat(App)
+describe('grid app on device', () => {
+	it('virtualizes paired rows and preserves selection after a deep seek', async () => {
+		const { view, host, unmount } = await mountXplat(App)
+		const item = (number: number) => findByTestId(view, `grid.item.sample-${number}`)
 
-    const increment = findByTestId(view, 'counter.increment')
-    const count = findByTestId<TextInputView>(view, 'counter.value')
+		await waitUntil(() => !!item(1)?.isLoaded)
+		expect(item(2)?.isLoaded).toBe(true)
+		await waitUntil(() => (item(1)?.getActualSize().width ?? 0) > 0)
 
-    expect(increment?.isLoaded, 'counter.increment resolves to a loaded native view').toBe(true)
+		const width = item(1)!.getActualSize().width
+		const first = item(1)!.getLocationOnScreen()
+		const second = item(2)!.getLocationOnScreen()
 
-    await tap(increment!)
-    await waitUntil(() => count?.text === '1', {
-      message: 'tap did not reach the increment Pressable',
-    })
+		expect(Math.abs(item(2)!.getActualSize().width - width)).toBeLessThan(2)
+		expect(second.x).toBeGreaterThan(first.x)
+		expect(Math.abs(second.y - first.y)).toBeLessThan(2)
+		expect(!!item(1001)).toBe(false)
+		await tap(item(1)!)
+		await waitUntil(() => viewText(view).includes('1 selected'))
 
-    await unmount()
-    await nextRenderPass()
-    expect(host.content).toBe(null)
-  })
+		await tap(findByTestId(view, 'grid.last')!)
+		await waitUntil(() => !!item(1001)?.isLoaded, { message: 'last row did not mount' })
+		expect(!!item(1)).toBe(false)
+		expect(findByTestId(view, 'grid.row.sample-1001')).toBeTruthy()
+		await waitUntil(() => (item(1001)?.getActualSize().width ?? 0) > 0)
+		expect(Math.abs(item(1001)!.getActualSize().width - width)).toBeLessThan(2)
+
+		await tap(findByTestId(view, 'grid.first')!)
+		await waitUntil(() => !!item(1)?.isLoaded)
+		expect(viewText(item(1)!)).toContain('Selected')
+		await tap(item(1)!)
+		await waitUntil(() => viewText(view).includes('0 selected'))
+
+		await tap(findByTestId(view, 'grid.stress')!)
+		await waitUntil(() => viewText(view).includes('10,001 items'))
+		await tap(findByTestId(view, 'grid.last')!)
+		await waitUntil(() => !!item(10001)?.isLoaded)
+		expect(!!item(1)).toBe(false)
+
+		await unmount()
+		await nextRenderPass()
+		expect(host.content).toBe(null)
+	})
+
 
   it('round-trips a controlled TextInput', async () => {
     const { view } = await mountXplat(NameForm)

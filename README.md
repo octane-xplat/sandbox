@@ -1,105 +1,41 @@
-# Octane Xplat Sandbox
+# Virtualized two-column grid
 
-A small playground for trying [Octane Xplat](https://octane-xplat.goddardai.org/).
-Clone it, change the starter screen, and experiment. This is a sandbox, so
-experiments may change or disappear.
+A focused Octane Xplat experiment for web, iOS and Android. The shared screen
+uses `VirtualList` with stable, keyed pairs of cards. Only nearby pairs mount;
+this is row virtualization, not a wrapping container holding the whole dataset.
 
-Scaffolded with the official `create-octane-xplat` creator, with web, iOS, and
-Android enabled. The starter includes a counter and a light/dark theme toggle.
+- Starts with 1,001 cards (501 rows); switch to 10,001 cards (5,001 rows).
+- First/last controls exercise deep seeks without manually scrolling thousands of cards.
+- Tap cards to select them. Selection is keyed by item ID in the screen, so it
+  survives row unmounts and dataset switches.
+- Both columns have equal flex width. A spare slot preserves the final odd
+  card's width. Rows have a fixed 144-unit extent including their bottom gap.
+- The viewport is deliberately bounded to 360 logical units on every target.
 
-## Run in your browser
+```sh
+pnpm install --frozen-lockfile # pnpm 11.24.0
+pnpm dev
+pnpm dev:ios --device 91D40099-A056-497D-A572-ADDDFD6A8F23
+pnpm dev:android --device DEVICE_SERIAL
+```
 
-Install [Node.js](https://nodejs.org/) 22.22.2 or later and
-[pnpm](https://pnpm.io/installation) 11.24.0 before starting. Run these commands in a terminal:
-
-1. Clone the repository and enter its folder:
-
-   ```sh
-   git clone https://github.com/octane-xplat/sandbox.git
-   cd sandbox
-   ```
-
-2. Install the packages:
-
-   ```sh
-   pnpm install --frozen-lockfile
-   ```
-
-3. Start the development server:
-
-   ```sh
-   pnpm dev
-   ```
-
-Open the local address printed in the terminal. Try the counter, then edit
-`src/App.tsrx` and save to try a change. Shared styles live in `src/style.css`.
-Press Ctrl+C in the terminal to stop the server.
-
-If installation fails, resolve the error before starting the server. The
-[framework setup guide](https://octane-xplat.goddardai.org/toolchain) covers
-prerequisites and platform tools.
-
-## Check your experiments
-
-Run these commands from the sandbox folder:
+## Checks
 
 ```sh
 pnpm lint
 pnpm typecheck
 pnpm test:web
-pnpm test:links
 pnpm build
+pnpm test:ios --device 91D40099-A056-497D-A572-ADDDFD6A8F23
+pnpm test:android --device DEVICE_SERIAL
 ```
 
-The web test checks the counter using a simulated browser document (jsdom).
-It does not check layout or phone behavior. The build command produces the
-web app; it does not compile iOS or Android.
+Web tests use jsdom with a supplied viewport height. They check pairing, bounded
+mounted content, deep seeks, the odd final row, dataset switching and selection
+persistence. They do not establish browser layout or OS input behavior. The
+native app spec exercises the real list hosts, selection and first/last seeks
+through the managed test runner. Its taps dispatch native gesture observers;
+they do not establish OS hit testing.
 
-## Try iOS or Android
-
-Phone runs need NativeScript's platform tools. Follow the
-[framework setup guide](https://octane-xplat.goddardai.org/toolchain) first;
-iOS requires macOS and Xcode, and Android requires the Android SDK and Java.
-Use an existing device and pass its identifier explicitly:
-
-```sh
-pnpm dev:ios --device YOUR_IOS_DEVICE_UDID
-pnpm dev:android --device YOUR_ANDROID_DEVICE_SERIAL
-```
-
-Replace each placeholder with your device's identifier. Phone tests use the
-same explicit selection:
-
-```sh
-pnpm test:ios --device YOUR_IOS_DEVICE_UDID
-pnpm test:android --device YOUR_ANDROID_DEVICE_SERIAL
-```
-
-## Use a local framework checkout (optional)
-
-Normal installs use published packages. To test changes in a local Bun-based
-Octane Xplat checkout, see [the local-link setup](links/README.md):
-
-```sh
-pnpm dev:octane /absolute/path/to/octane-xplat
-```
-
-This prepares dependencies; start the app separately with `pnpm dev`.
-Restore published packages with `pnpm dev:published`.
-
-## Work with a coding agent
-
-Ask your agent to read `AGENTS.md` and `.agents/skills/xplat/SKILL.md` before
-editing. They explain the framework's shared-code and platform rules. Keep the
-creator's framework pins and patches together when upgrading:
-
-```sh
-pnpm dlx @octane-xplat/cli@latest upgrade --check
-```
-
-See the [framework documentation](https://octane-xplat.goddardai.org/) for
-components, styling, navigation, and services.
-
-## License
-
-[MIT](LICENSE). Fork it and make it your own.
+No visual analysis or screenshots are used for this experiment. Keep the
+experiment branch separate from `main`.
