@@ -21,7 +21,7 @@ const FEATURES = [
 /** Every element here compiles for web AND for NativeScript iOS/Android —
  *  the same file, no branches. Platform divergence lives in leaf files
  *  (.web.tsrx / .mobile.tsrx), never inside a component. */
-export function App() @{
+export function StarterApp() @{
   const [count, setCount] = useState(0)
   // null = follow the system until the user chooses a mode.
   const [override, setOverride] = useState<boolean | null>(() => {
@@ -83,3 +83,5 @@ export function App() @{
     </View>
   </SafeArea>
 }
+
+export { VisibilityExperiment as App } from './VisibilityExperiment.tsrx'

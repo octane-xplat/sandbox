@@ -1,0 +1,3 @@
+.probe-label { display: inline-block; }
+/* Browser removal is explicit; no reliance on flex/grid CSS collapse behavior. */
+.probe-collapse { visibility: visible; display: none; }

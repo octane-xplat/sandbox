@@ -111,3 +111,11 @@ body {
 .link {
 	opacity: 0.7;
 }
+
+.probe-app { flex-grow: 1; padding: 16px; }
+.probe-player { flex-grow: 1; }
+.probe-row { display: flex; flex-direction: row; }
+.probe-label { width: 80px; height: 30px; flex-shrink: 0; }
+.probe-visible { visibility: visible; }
+.probe-hidden { visibility: hidden; }
+.probe-collapse { visibility: collapse; }

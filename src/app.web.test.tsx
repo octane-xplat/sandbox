@@ -1,7 +1,7 @@
 /** @jsxImportSource @octane-xplat/jsx/dom */
 import { expect, it, vi } from 'vitest'
 import { createRoot } from 'octane'
-import { App } from './App.tsrx'
+import { StarterApp as App } from './App.tsrx'
 
 it('updates the counter when its button is pressed', async () => {
   const container = document.createElement('div')

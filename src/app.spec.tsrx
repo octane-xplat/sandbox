@@ -19,7 +19,7 @@ import {
   waitUntil,
 } from '@octane-xplat/platform/testing'
 
-import { App } from './App.tsrx'
+import { StarterApp as App } from './App.tsrx'
 
 // Controlled input — typing flows up through onChange and back down as the
 // rendered value, and parent writes reach the native field.
