@@ -1,8 +1,9 @@
-import { useRef } from 'octane'
+import { useEffect, useRef } from 'octane'
 import { useSignal$ } from 'octane/signals/client'
 import {
 	View,
 	HStack,
+	Grid,
 	Text,
 	Pressable,
 	VirtualList,
@@ -17,6 +18,31 @@ export function App() {
 	const selected$ = useSignal$(new Set<string>())
 	const list = useRef<VirtualListHandle | null>(null)
 	const rows = stress$.get() ? stressRows : regularRows
+	const seekTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+	function cancelSeek() {
+		if (seekTimer.current !== null) {
+			clearTimeout(seekTimer.current)
+		}
+
+		seekTimer.current = null
+	}
+
+	useEffect(() => cancelSeek, [])
+
+	function jumpToLast() {
+		cancelSeek()
+
+		const key = rows[rows.length - 1]!.id
+
+		list.current?.scrollToItem(key, { align: 'end' })
+		// Deep seeks start from estimated row heights. Repeat after destination
+		// layout so the native scroll view can apply the measured content extent.
+		seekTimer.current = setTimeout(() => {
+			seekTimer.current = null
+			list.current?.scrollToItem(key, { align: 'end' })
+		}, 200)
+	}
 
 	function toggle(item: GridItem) {
 		selected$.set((current) => {
@@ -32,9 +58,10 @@ export function App() {
 		})
 	}
 
-	function card(item: GridItem) {
+	function card(item: GridItem, column: number) {
 		return (
 			<Pressable
+				col={column}
 				testID={`grid.item.${item.id}`}
 				accessibilityLabel={`Sample ${item.number}, ${item.category}`}
 				accessibilityState={{ selected: selected$.get().has(item.id) }}
@@ -56,10 +83,12 @@ export function App() {
 
 	function row(item: GridRow) {
 		return (
-			<HStack testID={`grid.row.${item.left.id}`} className="grid-row">
-				{card(item.left)}
-				{item.right ? card(item.right) : <View className="empty-slot" />}
-			</HStack>
+			<View testID={`grid.row.${item.left.id}`} className="grid-row">
+				<Grid className="grid-pair" columns="*,12,*" rows="*">
+					{card(item.left, 0)}
+					{item.right ? card(item.right, 2) : null}
+				</Grid>
+			</View>
 		)
 	}
 
@@ -78,7 +107,10 @@ export function App() {
 						testID="grid.first"
 						accessibilityLabel="Jump to first row"
 						className="button"
-						onPress={() => list.current?.scrollToIndex(0)}
+						onPress={() => {
+							cancelSeek()
+							list.current?.scrollToIndex(0)
+						}}
 					>
 						<Text>First row</Text>
 					</Pressable>
@@ -86,7 +118,7 @@ export function App() {
 						testID="grid.last"
 						accessibilityLabel="Jump to last row"
 						className="button"
-						onPress={() => list.current?.scrollToIndex(rows.length - 1, { align: 'end' })}
+						onPress={jumpToLast}
 					>
 						<Text>Last row</Text>
 					</Pressable>
@@ -96,6 +128,7 @@ export function App() {
 						className="button"
 						accessibilityState={{ pressed: stress$.get() }}
 						onPress={() => {
+							cancelSeek()
 							list.current?.scrollToOffset(0)
 							stress$.set((value) => !value)
 						}}

@@ -48,11 +48,13 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>Connect device tests to the development computer.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<!-- Loopback WebSocket for `ns test` (@nativescript/unit-test-runner):
-		     the on-device coordinator reaches the host Vitest session at
-		     ws://127.0.0.1:<port>. Scoped to local networking only. -->
+		<!-- Development WebSocket for `ns test` (@nativescript/unit-test-runner):
+		     simulators use loopback; physical iPhones use the explicit
+		     VITE_NATIVE_TEST_URL. Scoped to local networking only. -->
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>

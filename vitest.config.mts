@@ -14,6 +14,7 @@ export default defineConfig({
     nativeScript({
       platform: process.env.NS_PLATFORM || 'ios', // 'android' | 'ios' | 'visionos'
       device: process.env.NS_DEVICE || undefined,
+      host: process.env.NS_TEST_HOST || '127.0.0.1',
       // Keep this in sync with the import.meta.glob in src/test.ts —
       // the device can only run files that made it into the bundle.
       include: ['src/**/*.spec.{ts,tsx,tsrx}'],

@@ -105,7 +105,7 @@ describe('grid app on device', () => {
 		await waitUntil(() => viewText(view).includes('0 selected'))
 
 		await tap(findByTestId(view, 'grid.stress')!)
-		await waitUntil(() => viewText(view).includes('10,001 items'))
+		await waitUntil(() => viewText(view).join(' ').includes('10,001 items'))
 		await tap(findByTestId(view, 'grid.last')!)
 		await waitUntil(() => !!item(10001)?.isLoaded)
 		expect(!!item(1)).toBe(false)

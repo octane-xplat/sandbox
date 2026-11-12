@@ -13,6 +13,8 @@ import {
 import { createVitestHostPage } from '@nativescript/unit-test-runner/testing'
 
 const coordinator = new NativeScriptVitestCoordinator({
+  // Physical iPhones cannot reach the computer through their own loopback.
+  url: import.meta.env.VITE_NATIVE_TEST_URL || undefined,
   // Every spec matched by vitest.config.mts `include` must also match this
   // glob — vite statically bundles each as a lazily imported chunk that the
   // registry loads on demand.
